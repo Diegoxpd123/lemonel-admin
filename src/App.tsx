@@ -7,6 +7,9 @@ import { Cargando } from './ui'
 import Layout from './Layout'
 import Login from './pages/Login'
 import Resumen from './pages/Resumen'
+import Pedidos from './pages/Pedidos'
+import PedidoNuevo from './pages/PedidoNuevo'
+import PedidoDetalle from './pages/PedidoDetalle'
 import Productos from './pages/Productos'
 import ProductoEditor from './pages/ProductoEditor'
 import Categorias from './pages/Categorias'
@@ -45,6 +48,9 @@ const App = () => {
     <Routes>
       <Route element={<Layout sesion={sesion.data} />}>
         <Route index element={<Resumen />} />
+        <Route path="pedidos" element={<Pedidos />} />
+        <Route path="pedidos/nuevo" element={<PedidoNuevo />} />
+        <Route path="pedidos/:id" element={<PedidoDetalle />} />
         <Route path="productos" element={<Productos />} />
         <Route path="productos/nuevo" element={<ProductoEditor />} />
         <Route path="productos/:id" element={<ProductoEditor />} />

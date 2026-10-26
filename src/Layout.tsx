@@ -1,13 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
-import { ArrowSquareOut, Diamond, Gear, Key, List, Palette, Question, SignOut, SquaresFour, Stack, Tag, X } from '@phosphor-icons/react'
+import { ArrowSquareOut, Diamond, Gear, Key, List, Package, Palette, Question, SignOut, SquaresFour, Stack, Tag, X } from '@phosphor-icons/react'
 import { api, STORE_URL } from './api'
 import type { Sesion } from './types'
 import { entrada } from './motion'
 
 const enlaces = [
   { a: '/', t: 'Resumen', i: SquaresFour, fin: true },
+  { a: '/pedidos', t: 'Pedidos', i: Package },
   { a: '/productos', t: 'Productos', i: Diamond },
   { a: '/categorias', t: 'Categorías', i: Tag },
   { a: '/colecciones', t: 'Colecciones', i: Stack },

@@ -1,6 +1,7 @@
 import '@fontsource-variable/playfair-display'
 import '@fontsource-variable/montserrat'
 import './styles.css'
+import './pedidos.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'

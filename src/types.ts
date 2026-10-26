@@ -62,6 +62,7 @@ export type Ajustes = {
 }
 
 export type Resumen = {
+  pedidos: { nuevos: number; porEnviar: number; enCamino: number; conSaldo: number }
   productos: number
   agotados: number
   ocultos: number
@@ -73,3 +74,68 @@ export type Resumen = {
 }
 
 export type Sesion = { id: number; email: string; nombre: string }
+
+export type EstadoPedido = 'recibido' | 'pagado' | 'preparando' | 'enviado' | 'entregado'
+
+export type PedidoFila = {
+  id: number
+  codigo: string
+  origen: 'manual' | 'tienda'
+  estado: EstadoPedido
+  cancelado: boolean
+  cliente: string
+  ciudad: string
+  piezas: number
+  resumen: string
+  total: number
+  pagado: number
+  saldo: number
+  creado: string
+  actualizado: string
+}
+
+export type PedidoItem = {
+  id?: number
+  productoId: number | null
+  nombre: string
+  detalle: string
+  sku: string | null
+  foto: string | null
+  precio: number
+  cantidad: number
+}
+
+export type Pago = { id: number; monto: number; metodo: string; nota: string; fecha: string; tieneCaptura: boolean }
+
+export type EventoPedido = { id: number; estado: string; nota: string; fecha: string }
+
+export type MetodoEnvio = '' | 'motorizado' | 'shalom' | 'otro'
+
+export type Pedido = PedidoFila & {
+  token: string
+  whatsapp: string
+  nota: string
+  metodoEnvio: MetodoEnvio
+  agencia: string
+  seguimiento: string
+  envioCosto: number
+  descuento: number
+  subtotal: number
+  items: PedidoItem[]
+  pagos: Pago[]
+  eventos: EventoPedido[]
+}
+
+export type ListaPedidos = { pedidos: PedidoFila[]; conteos: Record<string, number> }
+
+export type ProductoCatalogo = {
+  id: number
+  nombre: string
+  categoria: string
+  oculto: boolean
+  agotado: boolean
+  escogeDiseno: boolean
+  foto: string | null
+  variantes: { id: number; tipo: string; precio: number; sku: string | null; agotado: boolean }[]
+  opciones: { nombre: string; valores: string[]; agotados: string[]; requerida: boolean }[]
+}

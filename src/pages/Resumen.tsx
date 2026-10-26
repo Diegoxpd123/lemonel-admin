@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, Eye, EyeSlash, Image, Star, Warning } from '@phosphor-icons/react'
+import { ArrowRight, Eye, EyeSlash, Image, Package, Star, Truck, Warning } from '@phosphor-icons/react'
 import { api } from '../api'
 import type { Resumen as TResumen } from '../types'
 import { Cargando } from '../ui'
@@ -85,6 +85,24 @@ const Resumen = () => {
         <section className="tarjeta">
           <h2 className="tarjeta__titulo">Para revisar</h2>
           <ul className="atajos">
+            <li>
+              <Link to="/pedidos?estado=recibido" className="atajo">
+                <Package size={22} weight="light" />
+                <span>
+                  <strong>{r.pedidos.nuevos}</strong> pedido(s) nuevo(s) por confirmar
+                </span>
+                <ArrowRight size={18} />
+              </Link>
+            </li>
+            <li>
+              <Link to="/pedidos?estado=porenviar" className="atajo">
+                <Truck size={22} weight="light" />
+                <span>
+                  <strong>{r.pedidos.porEnviar}</strong> pedido(s) por preparar y enviar
+                </span>
+                <ArrowRight size={18} />
+              </Link>
+            </li>
             <li>
               <Link to="/productos?estado=sinfoto" className="atajo">
                 <Image size={22} weight="light" />
