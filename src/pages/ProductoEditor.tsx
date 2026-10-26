@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type DragEvent, type KeyboardEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, ArrowSquareOut, ArrowLeft as Izq, ArrowRight as Der, Copy, Images, Plus, Trash, X } from '@phosphor-icons/react'
+import { ArrowLeft, ArrowSquareOut, ArrowLeft as Izq, ArrowRight as Der, Copy, Images, Plus, Prohibit, Trash, X } from '@phosphor-icons/react'
 import { api, STORE_URL } from '../api'
 import type { Categoria, Coleccion, Color, Opcion, Producto, Variante } from '../types'
 import { Campo, Cargando, Interruptor, useAviso, useConfirmar } from '../ui'
@@ -52,7 +52,7 @@ const desdeProducto = (p: Producto): Formulario => ({
   nuevo: p.nuevo,
   escogeDiseno: p.escogeDiseno,
   variantes: p.variantes.map((v) => ({ tipo: v.tipo, precio: v.precio, sku: v.sku, agotado: v.agotado })),
-  opciones: p.opciones.map((o) => ({ nombre: o.nombre, valores: [...o.valores], requerida: o.requerida })),
+  opciones: p.opciones.map((o) => ({ nombre: o.nombre, valores: [...o.valores], agotados: [...(o.agotados ?? [])], requerida: o.requerida })),
   colecciones: [...p.colecciones],
 })
 
@@ -60,7 +60,21 @@ const TIPOS = ['Collar', 'Aretes', 'Pulsera', 'Anillo', 'Set', 'Dúo', 'Cadena',
 const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const SUGERIDAS = ['Medida', 'Color', 'Letra', 'Grosor', 'Metal', 'Tamaño', 'Modelo']
 
-const ValoresInput = ({ valores, onChange, colores, etiqueta }: { valores: string[]; onChange: (v: string[]) => void; colores: Record<string, string>; etiqueta: string }) => {
+const ValoresInput = ({
+  valores,
+  agotados,
+  onChange,
+  onAgotados,
+  colores,
+  etiqueta,
+}: {
+  valores: string[]
+  agotados: string[]
+  onChange: (v: string[]) => void
+  onAgotados: (v: string[]) => void
+  colores: Record<string, string>
+  etiqueta: string
+}) => {
   const [texto, setTexto] = useState('')
 
   const agregar = (crudo: string) => {
@@ -83,15 +97,29 @@ const ValoresInput = ({ valores, onChange, colores, etiqueta }: { valores: strin
 
   return (
     <div className="valores">
-      {valores.map((v) => (
-        <span key={v} className="valor">
-          {colores[v] ? <i className="valor__color" style={{ background: colores[v] }} /> : null}
-          {v}
-          <button type="button" className="valor__quitar" onClick={() => onChange(valores.filter((x) => x !== v))} aria-label={`Quitar ${v}`}>
-            <X size={12} weight="bold" />
-          </button>
-        </span>
-      ))}
+      {valores.map((v) => {
+        const sinStock = agotados.includes(v)
+        return (
+          <span key={v} className={`valor${sinStock ? ' valor--agotado' : ''}`}>
+            {colores[v] ? <i className="valor__color" style={{ background: colores[v] }} /> : null}
+            <span className="valor__texto">{v}</span>
+            {sinStock ? <span className="valor__aviso">Agotado</span> : null}
+            <button
+              type="button"
+              className="valor__stock"
+              aria-pressed={sinStock}
+              onClick={() => onAgotados(sinStock ? agotados.filter((x) => x !== v) : [...agotados, v])}
+              aria-label={sinStock ? `${v} vuelve a estar disponible` : `Marcar ${v} como agotado`}
+              title={sinStock ? 'Marcar como disponible' : 'Marcar como agotado'}
+            >
+              <Prohibit size={14} weight="bold" />
+            </button>
+            <button type="button" className="valor__quitar" onClick={() => onChange(valores.filter((x) => x !== v))} aria-label={`Quitar ${v}`} title="Quitar">
+              <X size={12} weight="bold" />
+            </button>
+          </span>
+        )
+      })}
       <input
         className="valores__input"
         value={texto}
@@ -491,7 +519,15 @@ const ProductoEditor = () => {
                       <Trash size={20} />
                     </button>
                   </div>
-                  <ValoresInput valores={o.valores} onChange={(v) => cambiarOpcion(i, { valores: v })} colores={colores} etiqueta={o.nombre || 'opción'} />
+                  <ValoresInput
+                    valores={o.valores}
+                    agotados={o.agotados}
+                    onChange={(v) => cambiarOpcion(i, { valores: v, agotados: o.agotados.filter((a) => v.includes(a)) })}
+                    onAgotados={(a) => cambiarOpcion(i, { agotados: a })}
+                    colores={colores}
+                    etiqueta={o.nombre || 'opción'}
+                  />
+                  {o.valores.length > 0 ? <p className="texto-suave opcion__ayuda">Toca <Prohibit size={13} weight="bold" /> en un valor para marcarlo agotado: la clienta lo verá tachado y no podrá elegirlo.</p> : null}
                   {o.nombre.trim().toLowerCase() === 'letra' && o.valores.length === 0 ? (
                     <button type="button" className="enlace-btn" onClick={() => cambiarOpcion(i, { valores: LETRAS })}>
                       Agregar el abecedario completo (A–Z)
@@ -508,11 +544,11 @@ const ProductoEditor = () => {
             <div className="sugerencias">
               <span className="texto-suave">Agregar:</span>
               {['Medida', 'Color', 'Letra', 'Grosor'].map((n) => (
-                <button key={n} type="button" className="chip" onClick={() => poner('opciones', [...form.opciones, { nombre: n, valores: n === 'Letra' ? LETRAS : [], requerida: n === 'Letra' }])}>
+                <button key={n} type="button" className="chip" onClick={() => poner('opciones', [...form.opciones, { nombre: n, valores: n === 'Letra' ? LETRAS : [], agotados: [], requerida: n === 'Letra' }])}>
                   <Plus size={14} /> {n}
                 </button>
               ))}
-              <button type="button" className="chip" onClick={() => poner('opciones', [...form.opciones, { nombre: '', valores: [], requerida: false }])}>
+              <button type="button" className="chip" onClick={() => poner('opciones', [...form.opciones, { nombre: '', valores: [], agotados: [], requerida: false }])}>
                 <Plus size={14} /> Otra
               </button>
             </div>

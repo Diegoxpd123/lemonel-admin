@@ -2,7 +2,7 @@ export type Foto = { id: number; url: string; sm: string; ancho: number; alto: n
 
 export type Variante = { id?: number; tipo: string; precio: number; sku: string | null; agotado: boolean }
 
-export type Opcion = { id?: number; nombre: string; valores: string[]; requerida: boolean }
+export type Opcion = { id?: number; nombre: string; valores: string[]; agotados: string[]; requerida: boolean }
 
 export type Producto = {
   id: number
@@ -38,6 +38,7 @@ export type ProductoFila = {
   nuevo: boolean
   orden: number
   variantes: number
+  sinStock: string[]
   precioDesde: number
   foto: string | null
 }

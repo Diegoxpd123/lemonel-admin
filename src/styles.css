@@ -1241,6 +1241,53 @@ a.cifra:hover {
   background: rgba(52, 56, 42, 0.15);
 }
 
+.valor__stock {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: 2px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--olive-dk);
+}
+
+.valor__stock:hover {
+  background: rgba(166, 61, 64, 0.14);
+  color: #a63d40;
+}
+
+.valor--agotado {
+  background: var(--rose);
+}
+
+.valor--agotado .valor__texto {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.valor--agotado .valor__stock {
+  background: #a63d40;
+  color: #fff;
+}
+
+.valor__aviso {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a63d40;
+}
+
+.opcion__ayuda {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
 .valores__input {
   flex: 1;
   min-width: 150px;

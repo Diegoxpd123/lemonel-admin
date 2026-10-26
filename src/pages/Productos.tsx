@@ -160,6 +160,7 @@ const Productos = () => {
                   </p>
                   <div className="etiquetas">
                     {p.agotado ? <span className="etiqueta etiqueta--rojo">Agotado</span> : null}
+                    {!p.agotado && p.sinStock.length ? <span className="etiqueta etiqueta--rojo">Sin: {p.sinStock.join(', ')}</span> : null}
                     {p.oculto ? <span className="etiqueta etiqueta--gris">Oculto</span> : null}
                     {p.destacado ? <span className="etiqueta etiqueta--dorado">Más vendido</span> : null}
                     {p.nuevo ? <span className="etiqueta etiqueta--verde">Nuevo</span> : null}
